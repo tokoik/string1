@@ -8,20 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		7D1E90F81123E553005E6C75 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D1E90F71123E553005E6C75 /* main.cpp */; };
-		7D3EB9BB15F26B9200A60202 /* libglfw.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7D3EB9BA15F26B9200A60202 /* libglfw.dylib */; };
 		7D7AF85F1222C8CC003A0434 /* opengl.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7D7AF85E1222C8CC003A0434 /* opengl.icns */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		7D3EB9B415F2654500A60202 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				7D3EB9BB15F26B9200A60202 /* libglfw.dylib in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -29,7 +27,7 @@
 		7D1E90EE1123E36C005E6C75 /* string1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = string1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D1E90F11123E36C005E6C75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D1E90F71123E553005E6C75 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		7D3EB9BA15F26B9200A60202 /* libglfw.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libglfw.dylib; sourceTree = "<group>"; };
+		7D719E5015F301C50042078A /* libglfw.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.dylib; path = ../../../../../usr/local/lib/libglfw.dylib; sourceTree = "<group>"; };
 		7D7AF85E1222C8CC003A0434 /* opengl.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = opengl.icns; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -47,7 +45,7 @@
 		7D1E90D81123E2F7005E6C75 = {
 			isa = PBXGroup;
 			children = (
-				7D3EB9BA15F26B9200A60202 /* libglfw.dylib */,
+				7D719E5015F301C50042078A /* libglfw.dylib */,
 				7D1E90EF1123E36C005E6C75 /* Products */,
 				7D1E90F11123E36C005E6C75 /* Info.plist */,
 				7D7AF85E1222C8CC003A0434 /* opengl.icns */,
@@ -161,6 +159,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LD_DYLIB_INSTALL_NAME = "";
@@ -171,10 +170,12 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenGL,
+					"-L/usr/local/lib",
 					"-lglfw",
 				);
 				PRODUCT_NAME = string1;
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -189,6 +190,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LD_DYLIB_INSTALL_NAME = "";
@@ -199,10 +201,12 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					OpenGL,
+					"-L/usr/local/lib",
 					"-lglfw",
 				);
 				PRODUCT_NAME = string1;
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "";
 				ZERO_LINK = NO;
 			};
 			name = Release;

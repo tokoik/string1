@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstdlib>
-#include "glfw.h"
+#include <GL/glfw.h>
 
 static void display(void)
 {
