@@ -1,5 +1,5 @@
 CXXFLAGS	= -I/usr/X11R6/include -DX11 -Wall
-LDLIBS	= -L/usr/X11R6/lib -lglut -lGLU -lGL -lm
+LDLIBS	= -L/usr/X11R6/lib -lglfw -lGLU -lGL -lm
 OBJECTS	= $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 TARGET	= string1
 
