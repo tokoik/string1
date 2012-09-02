@@ -34,11 +34,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #  pragma comment(lib, "glew32.lib")
 #  include "glew.h"
 #  include "wglew.h"
+#elif defined(__APPLE__)
+#  define GLFW_INCLUDE_GL3
+#  define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #else
 #  define GL_GLEXT_PROTOTYPES
 #endif
-#define GLFW_INCLUDE_GL3
-#define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #include <GL/glfw.h>
 
 namespace gg
