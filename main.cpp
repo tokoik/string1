@@ -2,57 +2,57 @@
 #include <cstdlib>
 #include <cmath>
 
-// è£œåŠ©ãƒ©ã‚¤ãƒ–ãƒ©ãƒª
+// •â•ƒ‰ƒCƒuƒ‰ƒŠ
 #include "gg.h"
 using namespace gg;
 
 /*
-** ç”»é¢è¡¨ç¤º
+** ‰æ–Ê•\¦
 */
 static void display(void)
 {
   static int frame = 0;
   
-  // ç”»é¢ã‚¯ãƒªã‚¢
+  // ‰æ–ÊƒNƒŠƒA
   glClear(GL_COLOR_BUFFER_BIT);
   
   std::cerr << "display:" << ++frame << std::endl;
 }
 
 /*
-** OpenGL ã®åˆæœŸè¨­å®š
+** OpenGL ‚Ì‰Šúİ’è
 */
 static void initialize(void)
 {
-  // ã‚²ãƒ¼ãƒ ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ç‰¹è«–ã®éƒ½åˆã«ã‚‚ã¨ã¥ãåˆæœŸåŒ–
+  // ƒQ[ƒ€ƒOƒ‰ƒtƒBƒbƒNƒX“Á˜_‚Ì“s‡‚É‚à‚Æ‚Ã‚­‰Šú‰»
   ggInit();
   
-  // OpenGL ã®åˆæœŸè¨­å®š
+  // OpenGL ‚Ì‰Šúİ’è
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 /*
-** ãƒ—ãƒ­ã‚°ãƒ©ãƒ çµ‚äº†æ™‚ã®å‡¦ç†
+** ƒvƒƒOƒ‰ƒ€I—¹‚Ìˆ—
 */
-static void terminate(void)
+static void termination(void)
 {
-  // GLFW ã®å¾Œå‡¦ç†
+  // GLFW ‚ÌŒãˆ—
   glfwTerminate();
 }
 
 /*
-** ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒªã‚µã‚¤ã‚º
+** ƒEƒBƒ“ƒhƒE‚ÌƒŠƒTƒCƒY
 */
 static void resize(int w, int h)
 {
-  // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å…¨ä½“ã‚’ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆï¼ˆè¡¨ç¤ºé ˜åŸŸï¼‰ã«ã™ã‚‹
+  // ƒEƒBƒ“ƒhƒE‘S‘Ì‚ğƒrƒ…[ƒ|[ƒgi•\¦—Ìˆæj‚É‚·‚é
   glViewport(0, 0, w, h);
   
   std::cerr << w << "," << h << std::endl;
 }
 
 /*
-** ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã‚’ã‚¿ã‚¤ãƒ—ã—ãŸæ™‚ã®å‡¦ç†
+** ƒL[ƒ{[ƒh‚ğƒ^ƒCƒv‚µ‚½‚Ìˆ—
 */
 static void keyboard(int key, int state)
 {
@@ -62,7 +62,7 @@ static void keyboard(int key, int state)
     {
       case GLFW_KEY_ESC:
       case 'Q':
-        // ESC ã‚­ãƒ¼, q, Q ã‚’ã‚¿ã‚¤ãƒ—ã—ãŸã‚‰çµ‚äº†ã™ã‚‹
+        // ESC ƒL[, q, Q ‚ğƒ^ƒCƒv‚µ‚½‚çI—¹‚·‚é
         exit(EXIT_SUCCESS);
       default:
         break;
@@ -71,7 +71,7 @@ static void keyboard(int key, int state)
 }
 
 /*
-** å·¦ãƒœã‚¿ãƒ³ãƒ‰ãƒ©ãƒƒã‚°ã®å‡¦ç†
+** ¶ƒ{ƒ^ƒ“ƒhƒ‰ƒbƒO‚Ìˆ—
 */
 static void motionLeft(int x, int y)
 {
@@ -79,7 +79,7 @@ static void motionLeft(int x, int y)
 }
 
 /*
-** ãƒã‚¦ã‚¹ã®ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã¨ãã®å‡¦ç†
+** ƒ}ƒEƒX‚Ìƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«‚Ìˆ—
 */
 static void mouse(int button, int state)
 {
@@ -88,35 +88,35 @@ static void mouse(int button, int state)
     case GLFW_MOUSE_BUTTON_LEFT:
       if (state)
       {
-        // å·¦ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã¨ãã®å‡¦ç†
+        // ¶ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«‚Ìˆ—
         int x, y;
         glfwGetMousePos(&x, &y);
         glfwSetMousePosCallback(motionLeft);
       }
       else
       {
-        // å·¦ãƒœã‚¿ãƒ³ã‚’é›¢ã—ãŸã¨ãã®å‡¦ç†
+        // ¶ƒ{ƒ^ƒ“‚ğ—£‚µ‚½‚Æ‚«‚Ìˆ—
         glfwSetMousePosCallback(NULL);
       }
       break;
     case GLFW_MOUSE_BUTTON_MIDDLE:
       if (state)
       {
-        // ä¸­ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã¨ãã®å‡¦ç†
+        // ’†ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«‚Ìˆ—
       }
       else
       {
-        // ä¸­ãƒœã‚¿ãƒ³ã‚’é›¢ã—ãŸã¨ãã®å‡¦ç†
+        // ’†ƒ{ƒ^ƒ“‚ğ—£‚µ‚½‚Æ‚«‚Ìˆ—
       }
       break;
     case GLFW_MOUSE_BUTTON_RIGHT:
       if (state)
       {
-        // å³ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã¨ãã®å‡¦ç†
+        // ‰Eƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«‚Ìˆ—
       }
       else
       {
-        // å³ãƒœã‚¿ãƒ³ã‚’é›¢ã—ãŸã¨ãã®å‡¦ç†
+        // ‰Eƒ{ƒ^ƒ“‚ğ—£‚µ‚½‚Æ‚«‚Ìˆ—
       }
       break;
     default:
@@ -125,7 +125,7 @@ static void mouse(int button, int state)
 }
 
 /*
-** ãƒã‚¦ã‚¹ãƒ›ã‚¤ãƒ¼ãƒ«ã‚’å›ã—ãŸæ™‚ã®å‡¦ç†
+** ƒ}ƒEƒXƒzƒC[ƒ‹‚ğ‰ñ‚µ‚½‚Ìˆ—
 */
 static void wheel(int position)
 {
@@ -133,51 +133,51 @@ static void wheel(int position)
 }
 
 /*
-** ãƒ¡ã‚¤ãƒ³ãƒ—ãƒ­ã‚°ãƒ©ãƒ 
+** ƒƒCƒ“ƒvƒƒOƒ‰ƒ€
 */
 int main(int argc, char *argv[])
 {
-  // GLFW ã®åˆæœŸåŒ–
+  // GLFW ‚Ì‰Šú‰»
   if (!glfwInit())
   {
-    std::cerr << "GLFW ã®åˆæœŸåŒ–ã«å¤±æ•—ã—ã¾ã—ãŸ" << std::endl;
+    std::cerr << "GLFW ‚Ì‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½" << std::endl;
     exit(EXIT_FAILURE);
   }
   
-  // ãƒ—ãƒ­ã‚°ãƒ©ãƒ çµ‚äº†æ™‚ã®å‡¦ç†ã‚’è¨­å®šã™ã‚‹
-  atexit(terminate);
+  // ƒvƒƒOƒ‰ƒ€I—¹‚Ìˆ—‚ğİ’è‚·‚é
+  atexit(termination);
   
-  // OpenGL ã® Version 3.2 ã‚’é¸æŠã™ã‚‹
+  // OpenGL ‚Ì Version 3.2 ‚ğ‘I‘ğ‚·‚é
   glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
   glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
   
-  // OpenGL ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã
+  // OpenGL ‚ÌƒEƒBƒ“ƒhƒE‚ğŠJ‚­
   if (!glfwOpenWindow(300, 300, 0, 0, 0, 0, 0, 0, GLFW_WINDOW))
   {
-    std::cerr << "OpenGL ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‹ã‘ã¾ã›ã‚“ã§ã—ãŸ" << std::endl;
+    std::cerr << "OpenGL ‚ÌƒEƒBƒ“ƒhƒE‚ğŠJ‚¯‚Ü‚¹‚ñ‚Å‚µ‚½" << std::endl;
     exit(EXIT_FAILURE);
   }
   
-  // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«ã‚’è¨­å®šã™ã‚‹
+  // ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹‚ğİ’è‚·‚é
   glfwSetWindowTitle("String");
   glfwSetWindowSizeCallback(resize);
   glfwSetKeyCallback(keyboard);
   glfwSetMouseButtonCallback(mouse);
   glfwSetMouseWheelCallback(wheel);
   
-  // åˆæœŸè¨­å®š
+  // ‰Šúİ’è
   initialize();
   
-  // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒé–‹ã„ã¦ã„ã‚‹é–“ç¹°ã‚Šè¿”ã™
+  // ƒEƒBƒ“ƒhƒE‚ªŠJ‚¢‚Ä‚¢‚éŠÔŒJ‚è•Ô‚·
   while (glfwGetWindowParam(GLFW_OPENED))
   {
-    // ã‚¤ãƒ™ãƒ³ãƒˆå¾…ã¡
+    // ƒCƒxƒ“ƒg‘Ò‚¿
     glfwWaitEvents();
     
-    // ç”»é¢è¡¨ç¤º
+    // ‰æ–Ê•\¦
     display();
     
-    // ãƒ€ãƒ–ãƒ«ãƒãƒƒãƒ•ã‚¡ãƒªãƒ³ã‚°
+    // ƒ_ƒuƒ‹ƒoƒbƒtƒ@ƒŠƒ“ƒO
     glfwSwapBuffers();
   }
   

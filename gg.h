@@ -31,16 +31,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #if defined(WIN32)
 #  pragma warning(disable:4996)
 //#  pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
-#  pragma comment(lib, "glew32.lib")
-#  include "glew.h"
-#  include "wglew.h"
-#elif defined(__APPLE__)
-#  define GLFW_INCLUDE_GL3
-#  define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
+#  include "glfw.h"
+#  include "glext.h"
+#  include "glextfunc.h"
+#  if defined(_DEBUG)
+#    pragma comment(lib, "GLFWdebug.lib")
+#  else
+#    pragma comment(lib, "GLFWrelease.lib")
+#  endif
+#  pragma comment(lib, "opengl32.lib")
 #else
 #  define GL_GLEXT_PROTOTYPES
+#  include <GL/glfw.h>
+#  include <GL/glext.h">
 #endif
-#include <GL/glfw.h>
 
 namespace gg
 {

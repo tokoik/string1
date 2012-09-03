@@ -20,6 +20,7 @@ DerivedData/
 # for Windows
 #
 Debug/
+Release/
 ipch/
 Thumbs.db
 *.obj
