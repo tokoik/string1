@@ -673,7 +673,7 @@ GLuint gg::loadShader(
       glDeleteShader(geomShader);
 
       // ジオメトリシェーダに入力する基本図形の指定
-      glProgramParameteriEXT(program, GL_GEOMETRY_INPUT_TYPE, input);
+      glProgramParameteri(program, GL_GEOMETRY_INPUT_TYPE, input);
 
       // ジオメトリシェーダから出力する基本図形の指定
       glProgramParameteri(program, GL_GEOMETRY_OUTPUT_TYPE, output);

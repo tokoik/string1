@@ -22,7 +22,7 @@ static void display(void)
 /*
 ** OpenGL の初期設定
 */
-static void initialize(void)
+static void init(void)
 {
   // ゲームグラフィックス特論の都合にもとづく初期化
   ggInit();
@@ -34,7 +34,7 @@ static void initialize(void)
 /*
 ** プログラム終了時の処理
 */
-static void termination(void)
+static void term(void)
 {
   // GLFW の後処理
   glfwTerminate();
@@ -145,11 +145,12 @@ int main(int argc, char *argv[])
   }
   
   // プログラム終了時の処理を設定する
-  atexit(termination);
+  atexit(term);
   
   // OpenGL の Version 3.2 を選択する
   glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
   glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
+  glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   
   // OpenGL のウィンドウを開く
   if (!glfwOpenWindow(300, 300, 0, 0, 0, 0, 0, 0, GLFW_WINDOW))
@@ -166,7 +167,7 @@ int main(int argc, char *argv[])
   glfwSetMouseWheelCallback(wheel);
   
   // 初期設定
-  initialize();
+  init();
   
   // ウィンドウが開いている間繰り返す
   while (glfwGetWindowParam(GLFW_OPENED))
