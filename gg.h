@@ -43,7 +43,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #else
 #  define GL_GLEXT_PROTOTYPES
 #  include <GL/glfw.h>
-#  include <GL/glext.h>
+#  include "glext.h"
 #endif
 
 namespace gg
