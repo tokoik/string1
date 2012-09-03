@@ -24,25 +24,27 @@ static GLfloat cv[][3] =
 
 static const GLchar *vs[] =
 {
-  "#version 150",
-  "in vec4 pv;",
-  "void main(void)",
-  "{",
-  "  gl_Position = pv;",
-  "}"
+  "#version 150\n",
+  "in vec4 pv;\n",
+  "void main(void)\n",
+  "{\n",
+  "  gl_Position = pv;\n",
+  "}\n"
 };
 
 static const GLchar *fs[] =
 {
-  "#version 150",
-  "void main(void)",
-  "{",
-  "  gl_FragColor = vec4(1.0, 0.0, 0.0, 0.0);",
-  "}"
+  "#version 150\n",
+  "out vec4 fc;\n",
+  "void main(void)\n",
+  "{\n",
+  "  fc = vec4(1.0, 0.0, 0.0, 0.0);\n",
+  "}\n"
 };
 
 static GLuint program;
 static GLint pvLoc;
+static GLuint buffer;
 
 /*
 ** シェーダの情報を表示する
@@ -90,18 +92,22 @@ static void printProgramInfoLog(GLuint program)
 static void display(void)
 {
   static int frame = 0;
+
+  std::cerr << ++frame << std::endl;
   
   // 画面クリア
   glClear(GL_COLOR_BUFFER_BIT);
 
   glUseProgram(program);
+  glBindBuffer(GL_ARRAY_BUFFER, buffer);
+  ggError("bind");
   glEnableVertexAttribArray(pvLoc);
-  glVertexAttribPointer(pvLoc, sizeof pv[0] / sizeof pv[0][0], GL_FLOAT, GL_FALSE, 0, pv);
+  ggError("enable");
+  glVertexAttribPointer(pvLoc, sizeof pv[0] / sizeof pv[0][0], GL_FLOAT, GL_FALSE, 0, 0);
+  ggError("pointer");
   glDrawArrays(GL_LINE_LOOP, 0, sizeof pv / sizeof pv[0]);
   glDisableVertexAttribArray(pvLoc);
   glUseProgram(0);
-
-  std::cerr << "display:" << ++frame << std::endl;
 }
 
 /*
@@ -140,7 +146,7 @@ static void init(void)
   printShaderInfoLog(shader);
   glAttachShader(program, shader);
   glDeleteShader(shader);
-  ggError("link");
+
   // プログラムのリンク
   glLinkProgram(program);
   glGetProgramiv(program, GL_LINK_STATUS, &status);
@@ -149,6 +155,14 @@ static void init(void)
   
   // attribute 変数 pv の場所
   pvLoc = glGetAttribLocation(program, "pv");
+
+  // フラグメントシェーダの出力
+  glBindFragDataLocation(program, 0, "fc");
+  
+  // バッファオブジェクト
+  glGenBuffers(1, &buffer);
+  glBindBuffer(GL_ARRAY_BUFFER, buffer);
+  glBufferData(GL_ARRAY_BUFFER, sizeof pv, pv, GL_STATIC_DRAW);
   
   // OpenGL の初期設定
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -170,8 +184,6 @@ static void resize(int w, int h)
 {
   // ウィンドウ全体をビューポート（表示領域）にする
   glViewport(0, 0, w, h);
-  
-  std::cerr << w << "," << h << std::endl;
 }
 
 /*
@@ -198,7 +210,6 @@ static void keyboard(int key, int state)
 */
 static void motionLeft(int x, int y)
 {
-  std::cerr << x << "," << y << std::endl;
 }
 
 /*
@@ -252,7 +263,6 @@ static void mouse(int button, int state)
 */
 static void wheel(int position)
 {
-  std::cerr << position << std::endl;
 }
 
 /*

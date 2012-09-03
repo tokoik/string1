@@ -572,9 +572,6 @@ GLuint gg::loadShader(
   const char *vert,       // バーテックスシェーダのソースファイル名
   const char *frag,       // フラグメントシェーダのソースファイル名
   const char *geom,       // ジオメトリシェーダのソースファイル名
-  GLenum input,           // ジオメトリシェーダの入力プリミティブ
-  GLenum output,          // ジオメトリシェーダの出力プリミティブ
-  GLint vertices,         // ジオメトリシェーダの出力頂点数
   GLint nvarying,         // Transform Feedback する varying 変数の数
   const char **varyings   // Transform Feedback する varying 変数のリスト
   )
@@ -671,15 +668,6 @@ GLuint gg::loadShader(
       // ジオメトリシェーダのシェーダプログラムへの組み込み
       glAttachShader(program, geomShader);
       glDeleteShader(geomShader);
-
-      // ジオメトリシェーダに入力する基本図形の指定
-      glProgramParameteri(program, GL_GEOMETRY_INPUT_TYPE, input);
-
-      // ジオメトリシェーダから出力する基本図形の指定
-      glProgramParameteri(program, GL_GEOMETRY_OUTPUT_TYPE, output);
-
-      // ジオメトリシェーダが出力する頂点数の設定
-      if (vertices > 0) glProgramParameteri(program, GL_GEOMETRY_VERTICES_OUT, vertices);
     }
 
     // feedback に使う varying 変数を指定する

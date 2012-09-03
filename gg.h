@@ -46,7 +46,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #  include <GL/glfw.h>
 #  include <OpenGL/glext.h>
 #  include <OpenGL/gl3ext.h>
-#  define glProgramParameteri glProgramParameteriEXT
 #else
 #  define GL_GLEXT_PROTOTYPES
 #  include <GL/glfw.h>
@@ -85,9 +84,6 @@ namespace gg
     const char *vert,                   // バーテックスシェーダのソースファイル名
     const char *frag = 0,               // フラグメントシェーダのソースファイル名（0 なら不使用）
     const char *geom = 0,               // ジオメトリシェーダのソースファイル名（0 なら不使用）
-    GLenum input = GL_TRIANGLES,        // ジオメトリシェーダの入力プリミティブ
-    GLenum output = GL_TRIANGLE_STRIP,  // ジオメトリシェーダの出力プリミティブ
-    int vertices = 0,                   // ジオメトリシェーダの出力頂点数
     int nvarying = 0,                   // フィードバックする varying 変数の数（0 なら不使用）
     const char **varyings = 0           // フィードバックする varying 変数のリスト
     );
@@ -938,13 +934,10 @@ namespace gg
       const char *vert,                   // バーテックスシェーダのソースファイル名
       const char *frag = 0,               // フラグメントシェーダのソースファイル名（0 なら不使用）
       const char *geom = 0,               // ジオメトリシェーダのソースファイル名（0 なら不使用）
-      GLenum input = GL_TRIANGLES,        // ジオメトリシェーダの入力プリミティブ
-      GLenum output = GL_TRIANGLE_STRIP,  // ジオメトリシェーダの出力プリミティブ
-      int vertices = 0,                   // ジオメトリシェーダの出力頂点数
       int nvarying = 0,                   // フィードバックする varying 変数の数（0 なら不使用）
       const char **varyings = 0           // フィードバックする varying 変数のリスト
       )
-      : program(loadShader(vert, frag, geom, input, output, vertices, nvarying, varyings)) {}
+      : program(loadShader(vert, frag, geom, nvarying, varyings)) {}
     GgShader(const GgShader &o)
       : GgAttribute(o), program(o.program) {}
     
@@ -964,15 +957,12 @@ namespace gg
       const char *vert,                   // バーテックスシェーダのソースファイル名
       const char *frag = 0,               // フラグメントシェーダのソースファイル名（0 なら不使用）
       const char *geom = 0,               // ジオメトリシェーダのソースファイル名（0 なら不使用）
-      GLenum input = GL_TRIANGLES,        // ジオメトリシェーダの入力プリミティブ
-      GLenum output = GL_TRIANGLE_STRIP,  // ジオメトリシェーダの出力プリミティブ
-      GLint vertices = 0,                 // ジオメトリシェーダの出力頂点数
       GLint nvarying = 0,                 // フィードバックする varying 変数の数（0 なら不使用）
       const char **varyings = 0           // フィードバックする varying 変数のリスト
       )
     {
       if (program != 0) glDeleteProgram(program);
-      program = loadShader(vert, frag, geom, input, output, vertices, nvarying, varyings);
+      program = loadShader(vert, frag, geom, nvarying, varyings);
     }
 
     // シェーダプログラムの使用を開始する
