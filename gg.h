@@ -40,10 +40,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #    pragma comment(lib, "GLFWrelease.lib")
 #  endif
 #  pragma comment(lib, "opengl32.lib")
+#elif defined(__APPLE__)
+#  define GLFW_INCLUDE_GL3
+#  define GLFW_NO_GLU
+#  include <GL/glfw.h>
+#  include <OpenGL/glext.h>
+#  include <OpenGL/gl3ext.h>
+#  define glProgramParameteri glProgramParameteriEXT
 #else
 #  define GL_GLEXT_PROTOTYPES
 #  include <GL/glfw.h>
-#  include "glext.h"
+#  include <GL/glext.h>
 #endif
 
 namespace gg

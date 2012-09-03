@@ -71,17 +71,8 @@ void gg::ggError(const char *msg)
     case GL_INVALID_OPERATION:
       std::cerr << "The specified operation is not allowed in the current state" << std::endl;
       break;
-    case GL_STACK_OVERFLOW:
-      std::cerr << "This command would cause a stack overflow" << std::endl;
-      break;
-    case GL_STACK_UNDERFLOW:
-      std::cerr << "This command would cause a a stack underflow" << std::endl;
-      break;
     case GL_OUT_OF_MEMORY:
       std::cerr << "There is not enough memory left to execute the command" << std::endl;
-      break;
-    case GL_TABLE_TOO_LARGE:
-      std::cerr << "The specified table exceeds the implementation's maximum supported table size" << std::endl;
       break;
     case GL_INVALID_FRAMEBUFFER_OPERATION:
       std::cerr << "The specified operation is not allowed current frame buffer" << std::endl;
@@ -114,12 +105,6 @@ void gg::ggFBOError(const char *msg)
       break;
     case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
       std::cerr << "Framebuffer incomplete, duplicate attachment" << std::endl;
-      break;
-    case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-      std::cerr << "Framebuffer incomplete, attached images must have same dimensions" << std::endl;
-      break;
-    case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-      std::cerr << "Framebuffer incomplete, attached images must have same internal" << std::endl;
       break;
     case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
       std::cerr << "Framebuffer incomplete, missing draw buffer" << std::endl;
@@ -688,7 +673,7 @@ GLuint gg::loadShader(
       glDeleteShader(geomShader);
 
       // ジオメトリシェーダに入力する基本図形の指定
-      glProgramParameteri(program, GL_GEOMETRY_INPUT_TYPE, input);
+      glProgramParameteriEXT(program, GL_GEOMETRY_INPUT_TYPE, input);
 
       // ジオメトリシェーダから出力する基本図形の指定
       glProgramParameteri(program, GL_GEOMETRY_OUTPUT_TYPE, output);
