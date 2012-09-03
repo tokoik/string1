@@ -83,9 +83,6 @@ void gg::ggError(const char *msg)
     case GL_TABLE_TOO_LARGE:
       std::cerr << "The specified table exceeds the implementation's maximum supported table size" << std::endl;
       break;
-#ifndef GL_INVALID_FRAMEBUFFER_OPERATION
-#    define GL_INVALID_FRAMEBUFFER_OPERATION 0x0506
-#endif
     case GL_INVALID_FRAMEBUFFER_OPERATION:
       std::cerr << "The specified operation is not allowed current frame buffer" << std::endl;
       break;
@@ -101,21 +98,21 @@ void gg::ggError(const char *msg)
 */
 void gg::ggFBOError(const char *msg)
 {
-  GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+  GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
-  if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
+  if (status != GL_FRAMEBUFFER_COMPLETE)
   {
     if (msg) std::cerr << msg << ": ";
 
     switch (status)
     {
-    case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
+    case GL_FRAMEBUFFER_UNSUPPORTED:
       std::cerr << "Unsupported framebuffer internal" << std::endl;
       break;
-    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
       std::cerr << "Framebuffer incomplete, missing attachment" << std::endl;
       break;
-    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
       std::cerr << "Framebuffer incomplete, duplicate attachment" << std::endl;
       break;
     case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
@@ -124,10 +121,10 @@ void gg::ggFBOError(const char *msg)
     case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
       std::cerr << "Framebuffer incomplete, attached images must have same internal" << std::endl;
       break;
-    case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
+    case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
       std::cerr << "Framebuffer incomplete, missing draw buffer" << std::endl;
       break;
-    case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
+    case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
       std::cerr << "Framebuffer incomplete, missing read buffer" << std::endl;
       break;
     default:
@@ -664,7 +661,7 @@ GLuint gg::loadShader(
     if (geom)
     {
       // ジオメトリシェーダの作成
-      GLuint geomShader = glCreateShader(GL_GEOMETRY_SHADER_EXT);
+      GLuint geomShader = glCreateShader(GL_GEOMETRY_SHADER);
 
       // ジオメトリシェーダのソースプログラムの読み込み
       if (readShaderSource(geomShader, geom))
@@ -691,13 +688,13 @@ GLuint gg::loadShader(
       glDeleteShader(geomShader);
 
       // ジオメトリシェーダに入力する基本図形の指定
-      glProgramParameteriEXT(program, GL_GEOMETRY_INPUT_TYPE_EXT, input);
+      glProgramParameteri(program, GL_GEOMETRY_INPUT_TYPE, input);
 
       // ジオメトリシェーダから出力する基本図形の指定
-      glProgramParameteriEXT(program, GL_GEOMETRY_OUTPUT_TYPE_EXT, output);
+      glProgramParameteri(program, GL_GEOMETRY_OUTPUT_TYPE, output);
 
       // ジオメトリシェーダが出力する頂点数の設定
-      if (vertices > 0) glProgramParameteriEXT(program, GL_GEOMETRY_VERTICES_OUT_EXT, vertices);
+      if (vertices > 0) glProgramParameteri(program, GL_GEOMETRY_VERTICES_OUT, vertices);
     }
 
     // feedback に使う varying 変数を指定する
