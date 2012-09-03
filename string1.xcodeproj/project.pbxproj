@@ -27,7 +27,7 @@
 /* Begin PBXFileReference section */
 		7D1E90EE1123E36C005E6C75 /* string1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = string1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D1E90F11123E36C005E6C75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7D1E90F71123E553005E6C75 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		7D1E90F71123E553005E6C75 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 8; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		7D719E5015F301C50042078A /* libglfw.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.dylib; path = ../../../../../usr/local/lib/libglfw.dylib; sourceTree = "<group>"; };
 		7D719E5F15F32DEA0042078A /* gg.cpp */ = {isa = PBXFileReference; fileEncoding = 8; lastKnownFileType = sourcecode.cpp.cpp; path = gg.cpp; sourceTree = "<group>"; };
 		7D719E6015F32DEA0042078A /* gg.h */ = {isa = PBXFileReference; fileEncoding = 8; lastKnownFileType = sourcecode.c.h; path = gg.h; sourceTree = "<group>"; };

@@ -172,14 +172,28 @@ int main(int argc, char *argv[])
   // ウィンドウが開いている間繰り返す
   while (glfwGetWindowParam(GLFW_OPENED))
   {
-    // イベント待ち
-    glfwWaitEvents();
-    
     // 画面表示
     display();
     
     // ダブルバッファリング
     glfwSwapBuffers();
+
+    // イベント待ち
+    for (;;)
+    {
+      int w, h, x, y;
+
+      glfwGetWindowSize(&w, &h);
+      glfwGetMousePos(&x, &y);
+      if (x >= 0 && x < w && y >= 0 && y < h)
+      {
+        if (glfwGetMouseButton(GLFW_MOUSE_BUTTON_LEFT)) break;
+        if (glfwGetMouseButton(GLFW_MOUSE_BUTTON_RIGHT)) break;
+        if (glfwGetMouseButton(GLFW_MOUSE_BUTTON_MIDDLE)) break;
+      }
+
+      glfwWaitEvents();
+    }
   }
   
   return EXIT_SUCCESS;
