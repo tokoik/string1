@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "gg.h"
 
 #if defined(WIN32)
-#  include "glextfunc.cpp"
+#  include "glextfunc.inc"
 #endif
 
 /*

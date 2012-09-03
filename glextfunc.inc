@@ -2078,7 +2078,7 @@ PFNGLPROGRAMUNIFORMHANDLEUI64VNVPROC glProgramUniformHandleui64vNV;
 PFNGLISTEXTUREHANDLERESIDENTNVPROC glIsTextureHandleResidentNV;
 PFNGLISIMAGEHANDLERESIDENTNVPROC glIsImageHandleResidentNV;
 
-void initGLExtFunc(void)
+inline static void initGLExtFunc(void)
 {
   glBlendColor = (PFNGLBLENDCOLORPROC)glfwGetProcAddress("glBlendColor");
   glBlendEquation = (PFNGLBLENDEQUATIONPROC)glfwGetProcAddress("glBlendEquation");
