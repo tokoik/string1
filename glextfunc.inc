@@ -1,5 +1,3 @@
-#include "glextfunc.h"
-
 PFNGLBLENDCOLORPROC glBlendColor;
 PFNGLBLENDEQUATIONPROC glBlendEquation;
 PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
