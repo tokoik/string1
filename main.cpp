@@ -6,6 +6,84 @@
 #include "gg.h"
 using namespace gg;
 
+static GLfloat pv[][2] =
+{
+  { -0.9f, -0.9f },
+  {  0.9f, -0.9f },
+  {  0.9f,  0.9f },
+  { -0.9f,  0.9f }
+};
+
+static GLfloat cv[][3] =
+{
+  { 1.0f, 0.0f, 0.0f },
+  { 1.0f, 0.0f, 0.0f },
+  { 1.0f, 0.0f, 0.0f },
+  { 1.0f, 0.0f, 0.0f }
+};
+
+static const GLchar *vs[] =
+{
+  "#version 150",
+  "in vec4 pv;",
+  "void main(void)",
+  "{",
+  "  gl_Position = pv;",
+  "}"
+};
+
+static const GLchar *fs[] =
+{
+  "#version 150",
+  "void main(void)",
+  "{",
+  "  gl_FragColor = vec4(1.0, 0.0, 0.0, 0.0);",
+  "}"
+};
+
+static GLuint program;
+static GLint pvLoc;
+
+/*
+** シェーダの情報を表示する
+*/
+static void printShaderInfoLog(GLuint shader)
+{
+  // シェーダのコンパイル時のログの長さを取得する
+  GLsizei bufSize;
+  glGetShaderiv(shader, GL_INFO_LOG_LENGTH , &bufSize);
+  
+  if (bufSize > 1)
+  {
+    // シェーダのコンパイル時のログの内容を取得する
+    GLchar *infoLog = new GLchar[bufSize];
+    GLsizei length;
+    glGetShaderInfoLog(shader, bufSize, &length, infoLog);
+    std::cerr << "InfoLog:\n" << infoLog << '\n' << std::endl;
+    delete[] infoLog;
+  }
+}
+
+/*
+** プログラムの情報を表示する
+*/
+static void printProgramInfoLog(GLuint program)
+{
+  // シェーダのリンク時のログの長さを取得する
+  GLsizei bufSize;
+  glGetProgramiv(program, GL_INFO_LOG_LENGTH , &bufSize);
+  
+  if (bufSize > 1)
+  {
+    // シェーダのリンク時のログの内容を取得する
+    GLchar *infoLog = new GLchar[bufSize];
+    GLsizei length;
+    glGetProgramInfoLog(program, bufSize, &length, infoLog);
+    std::cerr << "InfoLog:\n" << infoLog << '\n' << std::endl;
+    delete[] infoLog;
+  }
+}
+
 /*
 ** 画面表示
 */
@@ -15,15 +93,14 @@ static void display(void)
   
   // 画面クリア
   glClear(GL_COLOR_BUFFER_BIT);
-  
-  glColor3d(1.0, 0.0, 0.0);
-  glBegin(GL_LINE_LOOP);
-  glVertex2d(-0.9, -0.9);
-  glVertex2d( 0.9, -0.9);
-  glVertex2d( 0.9,  0.9);
-  glVertex2d(-0.9,  0.9);
-  glEnd();
-  
+
+  glUseProgram(program);
+  glEnableVertexAttribArray(pvLoc);
+  glVertexAttribPointer(pvLoc, sizeof pv[0] / sizeof pv[0][0], GL_FLOAT, GL_FALSE, 0, pv);
+  glDrawArrays(GL_LINE_LOOP, 0, sizeof pv / sizeof pv[0]);
+  glDisableVertexAttribArray(pvLoc);
+  glUseProgram(0);
+
   std::cerr << "display:" << ++frame << std::endl;
 }
 
@@ -34,6 +111,44 @@ static void init(void)
 {
   // ゲームグラフィックス特論の都合にもとづく初期化
   ggInit();
+  
+  // プログラムオブジェクトの作成
+  program = glCreateProgram();
+
+  // シェーダオブジェクト
+  GLuint shader;
+  
+  // コンパイル／リンク結果
+  GLint status;
+  
+  // バーテックスシェーダの作成
+  shader = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(shader, sizeof vs / sizeof vs[0], vs, NULL);
+  glCompileShader(shader);
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+  if (status == GL_FALSE) std::cerr << "Compile Error in Vertex Shader." << std::endl;
+  printShaderInfoLog(shader);
+  glAttachShader(program, shader);
+  glDeleteShader(shader);
+  
+  // フラグメントシェーダの作成
+  shader = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(shader, sizeof fs / sizeof fs[0], fs, NULL);
+  glCompileShader(shader);
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+  if (status == GL_FALSE) std::cerr << "Compile Error in Fragment Shader." << std::endl;
+  printShaderInfoLog(shader);
+  glAttachShader(program, shader);
+  glDeleteShader(shader);
+  ggError("link");
+  // プログラムのリンク
+  glLinkProgram(program);
+  glGetProgramiv(program, GL_LINK_STATUS, &status);
+  if (status == GL_FALSE) std::cerr << "Link Error." << std::endl;
+  printProgramInfoLog(program);
+  
+  // attribute 変数 pv の場所
+  pvLoc = glGetAttribLocation(program, "pv");
   
   // OpenGL の初期設定
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -187,21 +302,7 @@ int main(int argc, char *argv[])
     glfwSwapBuffers();
 
     // イベント待ち
-    for (;;)
-    {
-      int w, h, x, y;
-
-      glfwGetWindowSize(&w, &h);
-      glfwGetMousePos(&x, &y);
-      if (x >= 0 && x < w && y >= 0 && y < h)
-      {
-        if (glfwGetMouseButton(GLFW_MOUSE_BUTTON_LEFT)) break;
-        if (glfwGetMouseButton(GLFW_MOUSE_BUTTON_RIGHT)) break;
-        if (glfwGetMouseButton(GLFW_MOUSE_BUTTON_MIDDLE)) break;
-      }
-
-      glfwWaitEvents();
-    }
+    glfwWaitEvents();
   }
   
   return EXIT_SUCCESS;
