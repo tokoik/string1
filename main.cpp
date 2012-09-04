@@ -16,17 +16,17 @@ static GLfloat pv[][2] =
 
 static const GLchar *vs[] =
 {
-  "#version 150\n",
-  "in vec2 pv;\n",
+  "#version 150 core\n",
+  "in vec4 pv;\n",
   "void main(void)\n",
   "{\n",
-  "  gl_Position = vec4(pv, 0.0, 1.0);\n",
+  "  gl_Position = pv;\n",
   "}\n"
 };
 
 static const GLchar *fs[] =
 {
-  "#version 150\n",
+  "#version 150 core\n",
   "out vec4 fc;\n",
   "void main(void)\n",
   "{\n",
@@ -36,7 +36,7 @@ static const GLchar *fs[] =
 
 static GLuint program;
 static GLint pvLoc = 1;
-static GLuint buffer;
+static GLuint vao, vbo;
 
 /*
 ** シェーダの情報を表示する
@@ -90,11 +90,10 @@ static void display(void)
   // 画面クリア
   glClear(GL_COLOR_BUFFER_BIT);
 
+  glBindVertexArray(vao);
   glUseProgram(program);
-  glBindBuffer(GL_ARRAY_BUFFER, buffer);
   ggError("bind");
   glDrawArrays(GL_LINE_LOOP, 0, sizeof pv / sizeof pv[0]);
-  glDisableVertexAttribArray(pvLoc);
   glUseProgram(0);
 }
 
@@ -148,9 +147,13 @@ static void init(void)
   if (status == GL_FALSE) std::cerr << "Link Error." << std::endl;
   printProgramInfoLog(program);
   
+  // アレイオブジェクト
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
+
   // バッファオブジェクト
-  glGenBuffers(1, &buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, buffer);
+  glGenBuffers(1, &vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof pv, pv, GL_STATIC_DRAW);
   glVertexAttribPointer(pvLoc, sizeof pv[0] / sizeof pv[0][0], GL_FLOAT, GL_FALSE, 0, 0);
   ggError("pointer");
@@ -277,7 +280,7 @@ int main(int argc, char *argv[])
   glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
   glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
   glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  
+
   // OpenGL のウィンドウを開く
   if (!glfwOpenWindow(300, 300, 0, 0, 0, 0, 0, 0, GLFW_WINDOW))
   {
