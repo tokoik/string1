@@ -14,21 +14,13 @@ static GLfloat pv[][2] =
   { -0.9f,  0.9f }
 };
 
-static GLfloat cv[][3] =
-{
-  { 1.0f, 0.0f, 0.0f },
-  { 1.0f, 0.0f, 0.0f },
-  { 1.0f, 0.0f, 0.0f },
-  { 1.0f, 0.0f, 0.0f }
-};
-
 static const GLchar *vs[] =
 {
   "#version 150\n",
-  "in vec4 pv;\n",
+  "in vec2 pv;\n",
   "void main(void)\n",
   "{\n",
-  "  gl_Position = pv;\n",
+  "  gl_Position = vec4(pv, 0.0, 1.0);\n",
   "}\n"
 };
 
@@ -43,7 +35,7 @@ static const GLchar *fs[] =
 };
 
 static GLuint program;
-static GLint pvLoc;
+static GLint pvLoc = 1;
 static GLuint buffer;
 
 /*
@@ -101,10 +93,6 @@ static void display(void)
   glUseProgram(program);
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
   ggError("bind");
-  glEnableVertexAttribArray(pvLoc);
-  ggError("enable");
-  glVertexAttribPointer(pvLoc, sizeof pv[0] / sizeof pv[0][0], GL_FLOAT, GL_FALSE, 0, 0);
-  ggError("pointer");
   glDrawArrays(GL_LINE_LOOP, 0, sizeof pv / sizeof pv[0]);
   glDisableVertexAttribArray(pvLoc);
   glUseProgram(0);
@@ -121,6 +109,13 @@ static void init(void)
   // プログラムオブジェクトの作成
   program = glCreateProgram();
 
+  // attribute 変数 pv の場所
+  //pvLoc = 0;//glGetAttribLocation(program, "pv");
+  glBindAttribLocation(program, pvLoc, "pv");
+
+  // フラグメントシェーダの出力
+  glBindFragDataLocation(program, 0, "fc");
+  
   // シェーダオブジェクト
   GLuint shader;
   
@@ -153,16 +148,14 @@ static void init(void)
   if (status == GL_FALSE) std::cerr << "Link Error." << std::endl;
   printProgramInfoLog(program);
   
-  // attribute 変数 pv の場所
-  pvLoc = glGetAttribLocation(program, "pv");
-
-  // フラグメントシェーダの出力
-  glBindFragDataLocation(program, 0, "fc");
-  
   // バッファオブジェクト
   glGenBuffers(1, &buffer);
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof pv, pv, GL_STATIC_DRAW);
+  glVertexAttribPointer(pvLoc, sizeof pv[0] / sizeof pv[0][0], GL_FLOAT, GL_FALSE, 0, 0);
+  ggError("pointer");
+  glEnableVertexAttribArray(pvLoc);
+  ggError("enable");
   
   // OpenGL の初期設定
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
