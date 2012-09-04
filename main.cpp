@@ -53,7 +53,7 @@ static void printShaderInfoLog(GLuint shader)
     GLchar *infoLog = new GLchar[bufSize];
     GLsizei length;
     glGetShaderInfoLog(shader, bufSize, &length, infoLog);
-    std::cerr << "InfoLog:\n" << infoLog << '\n' << std::endl;
+    std::cerr << infoLog << std::endl;
     delete[] infoLog;
   }
 }
@@ -73,7 +73,7 @@ static void printProgramInfoLog(GLuint program)
     GLchar *infoLog = new GLchar[bufSize];
     GLsizei length;
     glGetProgramInfoLog(program, bufSize, &length, infoLog);
-    std::cerr << "InfoLog:\n" << infoLog << '\n' << std::endl;
+    std::cerr << infoLog << std::endl;
     delete[] infoLog;
   }
 }
@@ -83,16 +83,12 @@ static void printProgramInfoLog(GLuint program)
 */
 static void display(void)
 {
-  static int frame = 0;
-
-  std::cerr << ++frame << std::endl;
-  
   // ‰æ–ÊƒNƒŠƒA
   glClear(GL_COLOR_BUFFER_BIT);
 
-  glBindVertexArray(vao);
+  // }Œ`‚Ì•`‰æ
   glUseProgram(program);
-  ggError("bind");
+  glBindVertexArray(vao);
   glDrawArrays(GL_LINE_LOOP, 0, sizeof pv / sizeof pv[0]);
   glUseProgram(0);
 }
@@ -156,9 +152,7 @@ static void init(void)
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof pv, pv, GL_STATIC_DRAW);
   glVertexAttribPointer(pvLoc, sizeof pv[0] / sizeof pv[0][0], GL_FLOAT, GL_FALSE, 0, 0);
-  ggError("pointer");
   glEnableVertexAttribArray(pvLoc);
-  ggError("enable");
   
   // OpenGL ‚Ì‰ŠúÝ’è
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
