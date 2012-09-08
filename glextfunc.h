@@ -1,3 +1,7 @@
+#ifndef __GL_EXTFUNC_H__
+#define __GL_EXTFUNC_H__
+
+#  ifdef WIN32
 extern PFNGLBLENDCOLORPROC glBlendColor;
 extern PFNGLBLENDEQUATIONPROC glBlendEquation;
 extern PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
@@ -607,3 +611,9 @@ extern PFNGLSHADERSTORAGEBLOCKBINDINGPROC glShaderStorageBlockBinding;
 extern PFNGLTEXBUFFERRANGEPROC glTexBufferRange;
 extern PFNGLTEXSTORAGE2DMULTISAMPLEPROC glTexStorage2DMultisample;
 extern PFNGLTEXSTORAGE3DMULTISAMPLEPROC glTexStorage3DMultisample;
+
+#    define GL_GLEXT_PROTOTYPES
+#  endif
+#  include "glext.h"
+
+#endif

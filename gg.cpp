@@ -31,9 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "gg.h"
 
-#if defined(WIN32)
-#  include "glextfunc.inc"
-#endif
+#include "glextfunc.inc"
 
 /*
 ** ゲームグラフィックス特論の都合にもとづく初期化
@@ -41,9 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 void gg::ggInit(void)
 {
   // OpenGL 拡張機能の有効化
-#if defined(WIN32)
   initGLExtFunc();
-#endif
 
   // Swap Interval の設定
   glfwSwapInterval(1);

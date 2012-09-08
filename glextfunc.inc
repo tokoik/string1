@@ -1,3 +1,7 @@
+#ifndef __GL_EXTFUNC_INC__
+#define __GL_EXTFUNC_INC__
+
+#  ifdef WIN32
 PFNGLBLENDCOLORPROC glBlendColor;
 PFNGLBLENDEQUATIONPROC glBlendEquation;
 PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
@@ -607,9 +611,14 @@ PFNGLSHADERSTORAGEBLOCKBINDINGPROC glShaderStorageBlockBinding;
 PFNGLTEXBUFFERRANGEPROC glTexBufferRange;
 PFNGLTEXSTORAGE2DMULTISAMPLEPROC glTexStorage2DMultisample;
 PFNGLTEXSTORAGE3DMULTISAMPLEPROC glTexStorage3DMultisample;
+#  endif
 
-inline static void initGLExtFunc(void)
+#  ifdef __cplusplus
+inline
+#  endif
+static void initGLExtFunc(void)
 {
+#  ifdef WIN32
   glBlendColor = (PFNGLBLENDCOLORPROC)glfwGetProcAddress("glBlendColor");
   glBlendEquation = (PFNGLBLENDEQUATIONPROC)glfwGetProcAddress("glBlendEquation");
   glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC)glfwGetProcAddress("glDrawRangeElements");
@@ -1219,4 +1228,7 @@ inline static void initGLExtFunc(void)
   glTexBufferRange = (PFNGLTEXBUFFERRANGEPROC)glfwGetProcAddress("glTexBufferRange");
   glTexStorage2DMultisample = (PFNGLTEXSTORAGE2DMULTISAMPLEPROC)glfwGetProcAddress("glTexStorage2DMultisample");
   glTexStorage3DMultisample = (PFNGLTEXSTORAGE3DMULTISAMPLEPROC)glfwGetProcAddress("glTexStorage3DMultisample");
+#  endif
 }
+
+#endif
