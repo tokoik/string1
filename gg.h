@@ -34,11 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #  include "glfw.h"
 #  include "glext.h"
 #  include "glextfunc.h"
-#  if defined(_DEBUG)
-#    pragma comment(lib, "GLFWdebug.lib")
-#  else
-#    pragma comment(lib, "GLFWrelease.lib")
-#  endif
+#  pragma comment(lib, "GLFW.lib")
 #  pragma comment(lib, "opengl32.lib")
 #elif defined(__APPLE__)
 #  define GLFW_INCLUDE_GL3
