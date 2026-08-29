@@ -1,44 +1,45 @@
-#
-# for Linux
-#
-core
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
 *.o
-*~
-.*~
-a.out
-string1
-#
-# for Mac
-#
-.DS_Store
-build/
-*.xcodeproj/*
-!project.pbxproj
-*.xcuserdatad/
-DerivedData/
-#
-# for Windows
-#
-.vs/
-/Debug/
-/Release/
-/x64/
-/ipch/
-/packages/
-Thumbs.db
-*.ncb
-*.suo
-*.vcproj.*.*.user
-*.sdf
-*.opensdf
-*.VC.VC.opendb
-*.VC.db
-*.com
-*.exe
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
 *.dll
-!freeglut.dll
-!glew32.dll
-#
-# another stuff
-#
-*.bak
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# IDE / Build systems
+.vscode/
+.vs/
+*.sln.docstates
+*.suo
+*.user
+build/
+bin/
+lib/
+libs/
+CMakeLists.txt.user
+.DS_Store

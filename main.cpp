@@ -1,309 +1,303 @@
-#include <iostream>
-#include <cstdlib>
+ï»¿#include <cstdlib>
 #include <cmath>
-
-// •â•ƒ‰ƒCƒuƒ‰ƒŠ
-#include "gg.h"
+ 
+// è£œåŠ©ãƒ©ã‚¤ãƒ–ãƒ©ãƒª
+#include "Gg.h"
 using namespace gg;
-
-static GLfloat pv[][2] =
+ 
+// é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿
+static const int pointn = 20;                               // ç‚¹ã®æ•°
+static const GLfloat pointSize = 5.0f;                      // ç‚¹ã®å¤§ãã•
+static const GLfloat point0[] = { -0.9f,  0.0f,  0.0f };    // å§‹ç‚¹ã®ä½ç½®
+static const GLfloat point1[] = {  0.9f,  0.0f,  0.0f };    // çµ‚ç‚¹ã®ä½ç½®
+ 
+// ç‚¹ãƒ‡ãƒ¼ã‚¿
+static class PointBuffer
 {
-  { -0.9f, -0.9f },
-  {  0.9f, -0.9f },
-  {  0.9f,  0.9f },
-  { -0.9f,  0.9f }
-};
-
-static const GLchar *vs[] =
-{
-  "#version 150 core\n",
-  "in vec4 pv;\n",
-  "void main(void)\n",
-  "{\n",
-  "  gl_Position = pv;\n",
-  "}\n"
-};
-
-static const GLchar *fs[] =
-{
-  "#version 150 core\n",
-  "out vec4 fc;\n",
-  "void main(void)\n",
-  "{\n",
-  "  fc = vec4(1.0, 0.0, 0.0, 0.0);\n",
-  "}\n"
-};
-
-static GLuint program;
-static GLint pvLoc = 1;
-static GLuint vao, vbo;
-
-/*
-** ƒVƒF[ƒ_‚Ìî•ñ‚ğ•\¦‚·‚é
-*/
-static void printShaderInfoLog(GLuint shader)
-{
-  // ƒVƒF[ƒ_‚ÌƒRƒ“ƒpƒCƒ‹‚ÌƒƒO‚Ì’·‚³‚ğæ“¾‚·‚é
-  GLsizei bufSize;
-  glGetShaderiv(shader, GL_INFO_LOG_LENGTH , &bufSize);
+  // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+  GgBuffer<GLfloat[4]> position;
+ 
+public:
   
-  if (bufSize > 1)
-  {
-    // ƒVƒF[ƒ_‚ÌƒRƒ“ƒpƒCƒ‹‚ÌƒƒO‚Ì“à—e‚ğæ“¾‚·‚é
-    GLchar *infoLog = new GLchar[bufSize];
-    GLsizei length;
-    glGetShaderInfoLog(shader, bufSize, &length, infoLog);
-    std::cerr << infoLog << std::endl;
-    delete[] infoLog;
-  }
-}
-
-/*
-** ƒvƒƒOƒ‰ƒ€‚Ìî•ñ‚ğ•\¦‚·‚é
-*/
-static void printProgramInfoLog(GLuint program)
-{
-  // ƒVƒF[ƒ_‚ÌƒŠƒ“ƒN‚ÌƒƒO‚Ì’·‚³‚ğæ“¾‚·‚é
-  GLsizei bufSize;
-  glGetProgramiv(program, GL_INFO_LOG_LENGTH , &bufSize);
+  // ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+  ~PointBuffer(void) {}
   
-  if (bufSize > 1)
+  // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+  //    n: é ‚ç‚¹æ•°, pos: é ‚ç‚¹ã®ä½ç½®
+  PointBuffer(unsigned int n)
   {
-    // ƒVƒF[ƒ_‚ÌƒŠƒ“ƒN‚ÌƒƒO‚Ì“à—e‚ğæ“¾‚·‚é
-    GLchar *infoLog = new GLchar[bufSize];
-    GLsizei length;
-    glGetProgramInfoLog(program, bufSize, &length, infoLog);
-    std::cerr << infoLog << std::endl;
-    delete[] infoLog;
+    // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ãƒ¡ãƒ¢ãƒªã‚’ç¢ºä¿ã™ã‚‹
+    position.load(GL_ARRAY_BUFFER, n, 0, GL_DYNAMIC_COPY);
+ 
+    // ä½œæˆã—ãŸé ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«åˆæœŸå€¤ã‚’è¨­å®šã™ã‚‹
+    GLfloat (*p)[4] = (GLfloat (*)[4])glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+    for (unsigned int i = 0; i < n; ++i)
+    {
+      GLfloat t = (GLfloat)i / (GLfloat)(pointn - 1);
+      
+      p[i][0] = point0[0] * (1.0f - t) + point1[0] * t;
+      p[i][1] = point0[1] * (1.0f - t) + point1[1] * t;
+      p[i][2] = point0[2] * (1.0f - t) + point1[2] * t;
+      p[i][3] = 1.0f;
+    }
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
   }
-}
-
-/*
-** ‰æ–Ê•\¦
-*/
-static void display(void)
+ 
+  // æç”»
+  void draw(GLint pvLoc, GLenum mode)
+  {
+    glBindBuffer(GL_ARRAY_BUFFER, position.buf());
+    glEnableVertexAttribArray(pvLoc);
+    glVertexAttribPointer(pvLoc, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glDrawArrays(mode, 0, position.num());
+    glDisableVertexAttribArray(pvLoc);
+  }
+ 
+  // ãƒãƒƒãƒ•ã‚¡ä¸­ã®ç‚¹ã‹ã‚‰ (x, y) ã«è¿‘ã„ã‚‚ã®ã‚’æ¢ã™
+  int pick(GLfloat x, GLfloat y, GLfloat dx, GLfloat dy) const
+  {
+    glBindBuffer(GL_ARRAY_BUFFER, position.buf());
+    GLfloat (*p)[4] = (GLfloat (*)[4])glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+    for (unsigned int i = 0; i < position.num(); ++i)
+    {
+      if (fabs(p[i][0] - x) <= dx && fabs(p[i][1] - y) <= dy)
+      {
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+        return i;
+      }
+    }
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    return -1;
+  }
+  
+  // ãƒãƒƒãƒ•ã‚¡ä¸­ã® i ç•ªç›®ã®ç‚¹ã®ä½ç½®ã‚’ (x, y) ã«è¨­å®šã™ã‚‹
+  void move(int i, GLfloat x, GLfloat y) const
+  {
+    glBindBuffer(GL_ARRAY_BUFFER, position.buf());
+    GLfloat p[] = { x, y };
+    glBufferSubData(GL_ARRAY_BUFFER, sizeof (GLfloat[4]) * i, sizeof p, p);
+  }
+ 
+} *pointBuffer = 0;                           // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+ 
+// ã‚·ã‚§ãƒ¼ãƒ€
+static class PointShader
+  : public GgShader
 {
-  // ‰æ–ÊƒNƒŠƒA
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  // }Œ`‚Ì•`‰æ
-  glUseProgram(program);
-  glBindVertexArray(vao);
-  glDrawArrays(GL_LINE_LOOP, 0, sizeof pv / sizeof pv[0]);
-  glUseProgram(0);
+  // attribute å¤‰æ•°ã®å ´æ‰€
+  GLint positionLoc;
+  
+  // uniform å¤‰æ•°ã®å ´æ‰€
+  GLint colorLoc;
+ 
+public:
+ 
+  // ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+  ~PointShader(void) {}
+  
+  // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+  PointShader(
+    const char *vert = "point.vert",
+    const char *frag = "point.frag",
+    const char *position = "position",
+    const char *color = "color",
+    const char *fragcolor = "FragColor"
+    )
+    : GgShader(vert, frag)
+    , positionLoc(glGetAttribLocation(getProgram(), position))
+    , colorLoc(glGetUniformLocation(getProgram(), color))
+  {
+    glBindFragDataLocation(getProgram(), 0, fragcolor);
+  }
+  
+  // è‰²ã‚’è¨­å®šã™ã‚‹
+  void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f) const
+  {
+    glUniform4f(colorLoc, r, g, b, a);
+  }
+  
+  // attribute å¤‰æ•° pos ã®å ´æ‰€ã‚’å¾—ã‚‹
+  GLint getPositionLoc(void) const
+  {
+    return positionLoc;
+  }
+  
+} *pointShader = 0;
+ 
+// å¾Œå§‹æœ«
+static void cleanup(void)
+{
+  // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤ã™ã‚‹
+  delete pointBuffer;
+  
+  // ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤ã™ã‚‹
+  delete pointShader;
 }
-
-/*
-** OpenGL ‚Ì‰Šúİ’è
-*/
+ 
+// åˆæœŸåŒ–å‡¦ç†
 static void init(void)
 {
-  // ƒQ[ƒ€ƒOƒ‰ƒtƒBƒbƒNƒX“Á˜_‚Ì“s‡‚É‚à‚Æ‚Ã‚­‰Šú‰»
+  // ã‚²ãƒ¼ãƒ ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ç‰¹è«–ã®éƒ½åˆã«ã‚‚ã¨ã¥ãåˆæœŸåŒ–
   ggInit();
   
-  // ƒvƒƒOƒ‰ƒ€ƒIƒuƒWƒFƒNƒg‚Ìì¬
-  program = glCreateProgram();
-
-  // attribute •Ï” pv ‚ÌêŠ
-  //pvLoc = 0;//glGetAttribLocation(program, "pv");
-  glBindAttribLocation(program, pvLoc, "pv");
-
-  // ƒtƒ‰ƒOƒƒ“ƒgƒVƒF[ƒ_‚Ìo—Í
-  glBindFragDataLocation(program, 0, "fc");
+  // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½œæˆã™ã‚‹
+  pointBuffer = new PointBuffer(pointn);
   
-  // ƒVƒF[ƒ_ƒIƒuƒWƒFƒNƒg
-  GLuint shader;
+  // ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆï¼ˆã‚·ã‚§ãƒ¼ãƒ€ï¼‰ã‚’ä½œæˆã™ã‚‹
+  pointShader = new PointShader();
+ 
+  // OpenGL ã®åˆæœŸè¨­å®š
+  glClearColor(1.0, 1.0, 1.0, 1.0);
   
-  // ƒRƒ“ƒpƒCƒ‹^ƒŠƒ“ƒNŒ‹‰Ê
-  GLint status;
-  
-  // ƒo[ƒeƒbƒNƒXƒVƒF[ƒ_‚Ìì¬
-  shader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(shader, sizeof vs / sizeof vs[0], vs, NULL);
-  glCompileShader(shader);
-  glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-  if (status == GL_FALSE) std::cerr << "Compile Error in Vertex Shader." << std::endl;
-  printShaderInfoLog(shader);
-  glAttachShader(program, shader);
-  glDeleteShader(shader);
-  
-  // ƒtƒ‰ƒOƒƒ“ƒgƒVƒF[ƒ_‚Ìì¬
-  shader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(shader, sizeof fs / sizeof fs[0], fs, NULL);
-  glCompileShader(shader);
-  glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-  if (status == GL_FALSE) std::cerr << "Compile Error in Fragment Shader." << std::endl;
-  printShaderInfoLog(shader);
-  glAttachShader(program, shader);
-  glDeleteShader(shader);
-
-  // ƒvƒƒOƒ‰ƒ€‚ÌƒŠƒ“ƒN
-  glLinkProgram(program);
-  glGetProgramiv(program, GL_LINK_STATUS, &status);
-  if (status == GL_FALSE) std::cerr << "Link Error." << std::endl;
-  printProgramInfoLog(program);
-  
-  // ƒAƒŒƒCƒIƒuƒWƒFƒNƒg
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-
-  // ƒoƒbƒtƒ@ƒIƒuƒWƒFƒNƒg
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof pv, pv, GL_STATIC_DRAW);
-  glVertexAttribPointer(pvLoc, sizeof pv[0] / sizeof pv[0][0], GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(pvLoc);
-  
-  // OpenGL ‚Ì‰Šúİ’è
-  glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+  // å¾Œå§‹æœ«
+  atexit(cleanup);
 }
-
-/*
-** ƒvƒƒOƒ‰ƒ€I—¹‚Ìˆ—
-*/
-static void term(void)
+ 
+// ç”»é¢ã«å›³å½¢ã‚’æç”»ã™ã‚‹
+static void display(void)
 {
-  // GLFW ‚ÌŒãˆ—
-  glfwTerminate();
+  // ç”»é¢ã‚¯ãƒªã‚¢
+  glClear(GL_COLOR_BUFFER_BIT);
+  
+  // ç‚¹ã®æç”»
+  pointShader->use();
+  pointShader->setColor(0.0f, 0.0f, 0.0f);
+  pointBuffer->draw(pointShader->getPositionLoc(), GL_LINE_STRIP);
+  pointShader->setColor(1.0f, 0.0f, 0.0f);
+  glPointSize(pointSize);
+  pointBuffer->draw(pointShader->getPositionLoc(), GL_POINTS);
+ 
+  // ãƒ€ãƒ–ãƒ«ãƒãƒƒãƒ•ã‚¡ãƒªãƒ³ã‚°
+  glutSwapBuffers();
 }
-
-/*
-** ƒEƒBƒ“ƒhƒE‚ÌƒŠƒTƒCƒY
-*/
+ 
+// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä¸­å¿ƒä½ç½®
+static GLfloat cx, cy;
+ 
+// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚ªãƒ¼ãƒ—ãƒ³ãƒ»ãƒªã‚µã‚¤ã‚ºæ™‚ã®å‡¦ç†
 static void resize(int w, int h)
 {
-  // ƒEƒBƒ“ƒhƒE‘S‘Ì‚ğƒrƒ…[ƒ|[ƒgi•\¦—Ìˆæj‚É‚·‚é
+  // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å…¨ä½“ã‚’ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆï¼ˆè¡¨ç¤ºé ˜åŸŸï¼‰ã«ã™ã‚‹
   glViewport(0, 0, w, h);
+  
+  // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å¹…ã¨é«˜ã•ã‚’è¦šãˆã¦ãŠã
+  cx = w * 0.5f;
+  cy = h * 0.5f;
 }
-
-/*
-** ƒL[ƒ{[ƒh‚ğƒ^ƒCƒv‚µ‚½‚Ìˆ—
-*/
-static void keyboard(int key, int state)
+ 
+// æŠ¼ã•ã‚ŒãŸãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³
+static int pressed;
+ 
+// ãƒ‰ãƒ©ãƒƒã‚°ã•ã‚Œã¦ã„ã‚‹ç‚¹
+static int hit = -1;
+ 
+// ä½•ã‚‚ã™ã‚‹ã“ã¨ãŒãªããªã£ãŸæ™‚ã®å‡¦ç†
+static void idle(void)
 {
-  if (state)
-  {
-    switch (key)
-    {
-      case GLFW_KEY_ESC:
-      case 'Q':
-        // ESC ƒL[, q, Q ‚ğƒ^ƒCƒv‚µ‚½‚çI—¹‚·‚é
-        exit(EXIT_SUCCESS);
-      default:
-        break;
-    }
-  }
+  // ç”»é¢ã®å†æç”»ã‚’è¡Œã†
+  glutPostRedisplay();
 }
-
-/*
-** ¶ƒ{ƒ^ƒ“ƒhƒ‰ƒbƒO‚Ìˆ—
-*/
-static void motionLeft(int x, int y)
+ 
+// ãƒã‚¦ã‚¹ã®ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã¨ãã®å‡¦ç†
+static void mouse(int button, int state, int x, int y)
 {
-}
-
-/*
-** ƒ}ƒEƒX‚Ìƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«‚Ìˆ—
-*/
-static void mouse(int button, int state)
-{
+  // æŠ¼ã•ã‚ŒãŸãƒœã‚¿ãƒ³ã‚’è¦šãˆã¦ãŠã
+  pressed = button;
+  
   switch (button)
   {
-    case GLFW_MOUSE_BUTTON_LEFT:
-      if (state)
-      {
-        // ¶ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«‚Ìˆ—
-        int x, y;
-        glfwGetMousePos(&x, &y);
-        glfwSetMousePosCallback(motionLeft);
-      }
-      else
-      {
-        // ¶ƒ{ƒ^ƒ“‚ğ—£‚µ‚½‚Æ‚«‚Ìˆ—
-        glfwSetMousePosCallback(NULL);
-      }
-      break;
-    case GLFW_MOUSE_BUTTON_MIDDLE:
-      if (state)
-      {
-        // ’†ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«‚Ìˆ—
-      }
-      else
-      {
-        // ’†ƒ{ƒ^ƒ“‚ğ—£‚µ‚½‚Æ‚«‚Ìˆ—
-      }
-      break;
-    case GLFW_MOUSE_BUTTON_RIGHT:
-      if (state)
-      {
-        // ‰Eƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«‚Ìˆ—
-      }
-      else
-      {
-        // ‰Eƒ{ƒ^ƒ“‚ğ—£‚µ‚½‚Æ‚«‚Ìˆ—
-      }
-      break;
-    default:
-      break;
+  case GLUT_LEFT_BUTTON:
+    if (state == GLUT_DOWN)
+    {
+      // å·¦ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã¨ãã®å‡¦ç†
+      hit = pointBuffer->pick((GLfloat)x / cx - 1.0f, 1.0f - (GLfloat)y / cy, pointSize / cx, pointSize / cy);
+      if (hit >= 0) glutIdleFunc(idle);
+    }
+    else
+    {
+      // å·¦ãƒœã‚¿ãƒ³ã‚’é›¢ã—ãŸã¨ãã®å‡¦ç†
+      pointBuffer->move(hit, (GLfloat)x / cx - 1.0f, 1.0f - (GLfloat)y / cy);
+      hit = -1;
+      glutIdleFunc(0);
+    }
+    break;
+  case GLUT_MIDDLE_BUTTON:
+    if (state == GLUT_DOWN)
+    {
+      // ä¸­ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã¨ãã®å‡¦ç†
+    }
+    else
+    {
+      // ä¸­ãƒœã‚¿ãƒ³ã‚’é›¢ã—ãŸã¨ãã®å‡¦ç†
+    }
+    break;
+  case GLUT_RIGHT_BUTTON:
+    if (state == GLUT_DOWN)
+    {
+      // å³ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸã¨ãã®å‡¦ç†
+    }
+    else
+    {
+      // å³ãƒœã‚¿ãƒ³ã‚’é›¢ã—ãŸã¨ãã®å‡¦ç†
+    }
+    break;
+  default:
+    break;
   }
 }
-
-/*
-** ƒ}ƒEƒXƒzƒC[ƒ‹‚ğ‰ñ‚µ‚½‚Ìˆ—
-*/
-static void wheel(int position)
+ 
+// ãƒã‚¦ã‚¹ã®ãƒ‰ãƒ©ãƒƒã‚°ä¸­ã®å‡¦ç†
+static void motion(int x, int y)
 {
+  switch (pressed)
+  {
+  case GLUT_LEFT_BUTTON:
+    // å·¦ãƒœã‚¿ãƒ³ã§ãƒ‰ãƒ©ãƒƒã‚°ä¸­ã®å‡¦ç†
+    if (hit >= 0)
+    {
+      pointBuffer->move(hit, (GLfloat)x / cx - 1.0f, 1.0f - (GLfloat)y / cy);
+    }
+    break;
+  case GLUT_MIDDLE_BUTTON:
+    // ä¸­ãƒœã‚¿ãƒ³ã§ãƒ‰ãƒ©ãƒƒã‚°ä¸­ã®å‡¦ç†
+    break;
+  case GLUT_RIGHT_BUTTON:
+    // å³ãƒœã‚¿ãƒ³ã§ãƒ‰ãƒ©ãƒƒã‚°ä¸­ã®å‡¦ç†
+    break;
+  default:
+    break;
+  }
 }
-
-/*
-** ƒƒCƒ“ƒvƒƒOƒ‰ƒ€
-*/
+ 
+// ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã‚’ã‚¿ã‚¤ãƒ—ã—ãŸã¨ãã®å‡¦ç†
+static void keyboard(unsigned char key, int x, int y)
+{
+  switch (key) {
+  case '\033':
+  case 'q':
+  case 'Q':
+    // ESC ã‚­ãƒ¼, q, Q ã‚’ã‚¿ã‚¤ãƒ—ã—ãŸã‚‰çµ‚äº†ã™ã‚‹
+    exit(0);
+  default:
+    break;
+  }
+}
+ 
+// ãƒ¡ã‚¤ãƒ³ãƒ—ãƒ­ã‚°ãƒ©ãƒ 
 int main(int argc, char *argv[])
 {
-  // GLFW ‚Ì‰Šú‰»
-  if (!glfwInit())
-  {
-    std::cerr << "GLFW ‚Ì‰Šú‰»‚É¸”s‚µ‚Ü‚µ‚½" << std::endl;
-    exit(EXIT_FAILURE);
-  }
-  
-  // ƒvƒƒOƒ‰ƒ€I—¹‚Ìˆ—‚ğİ’è‚·‚é
-  atexit(term);
-  
-  // OpenGL ‚Ì Version 3.2 ‚ğ‘I‘ğ‚·‚é
-  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
-  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
-  glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-  // OpenGL ‚ÌƒEƒBƒ“ƒhƒE‚ğŠJ‚­
-  if (!glfwOpenWindow(300, 300, 0, 0, 0, 0, 0, 0, GLFW_WINDOW))
-  {
-    std::cerr << "OpenGL ‚ÌƒEƒBƒ“ƒhƒE‚ğŠJ‚¯‚Ü‚¹‚ñ‚Å‚µ‚½" << std::endl;
-    exit(EXIT_FAILURE);
-  }
-  
-  // ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹‚ğİ’è‚·‚é
-  glfwSetWindowTitle("String");
-  glfwSetWindowSizeCallback(resize);
-  glfwSetKeyCallback(keyboard);
-  glfwSetMouseButtonCallback(mouse);
-  glfwSetMouseWheelCallback(wheel);
-  
-  // ‰Šúİ’è
+  glutInitWindowSize(500, 500);
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+  glutCreateWindow("physics");
+  glutDisplayFunc(display);
+  glutReshapeFunc(resize);
+  glutMouseFunc(mouse);
+  glutMotionFunc(motion);
+  glutKeyboardFunc(keyboard);
   init();
-  
-  // ƒEƒBƒ“ƒhƒE‚ªŠJ‚¢‚Ä‚¢‚éŠÔŒJ‚è•Ô‚·
-  while (glfwGetWindowParam(GLFW_OPENED))
-  {
-    // ‰æ–Ê•\¦
-    display();
-    
-    // ƒ_ƒuƒ‹ƒoƒbƒtƒ@ƒŠƒ“ƒO
-    glfwSwapBuffers();
-
-    // ƒCƒxƒ“ƒg‘Ò‚¿
-    glfwWaitEvents();
-  }
-  
-  return EXIT_SUCCESS;
+  glutMainLoop();
+ 
+  return 0;
 }
