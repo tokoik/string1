@@ -6,7 +6,7 @@
 
 本プログラムは、以下のブログ記事の解説のために提供されています。
 
-- [ひものシミュレーション 2](https://tokoik.github.io/blog/2011/12/07/seminar.html)
+- [ひものシミュレーション 2](https://tokoik.github.io/blog/2011-12-07.html)
 
 
 ## 動作環境
